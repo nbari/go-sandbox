@@ -7,8 +7,7 @@ import (
 )
 
 func main() {
-	//	config := config.Get("/Volumes/Raid/Google Drive/projects/go/src/github.com/nbari/violetear/router.yml")
-	config := config.Get("~/projects/go/src/github.com/nbari/violetear/router.yml")
+	config := config.Get("~/projects/go/src/github.com/nbari/violetear/config/config_test.yml")
 	router := violetear.New()
 	fmt.Println(config, router)
 
