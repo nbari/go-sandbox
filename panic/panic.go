@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -20,11 +21,11 @@ func (h PanicHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func handle_Root(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "test exit codes, example: /panic\n%s", time.Now())
+	fmt.Fprintf(w, "my PID: %d\n%s", os.Getpid(), time.Now())
 }
 
 func handle_Panic(w http.ResponseWriter, r *http.Request) {
-	panic("just panicked and continue living")
+	panic("just panicked and continue living...")
 }
 
 func handle_Panic2(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +33,7 @@ func handle_Panic2(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.Printf("Starting with PID: %d", os.Getpid())
 	http.HandleFunc("/", handle_Root)
 	http.HandleFunc("/panic", handle_Panic)
 	http.Handle("/die", PanicHandler(handle_Panic2))
