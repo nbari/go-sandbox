@@ -3,23 +3,40 @@ package main
 import (
 	"fmt"
 	"github.com/nbari/violetear"
+	"strings"
 )
 
 func main() {
 	trie := violetear.NewTrie()
-	fmt.Println(trie)
 
-	m := map[string]string{"POST": "h_post", "GET": "h_get"}
+	trie.Set([]string{""}, "root", "GET")
+	trie.Set([]string{"hello"}, "h_hello", "GET")
+	trie.Set([]string{"hello", "world"}, "h_hello_world", "GET")
+	trie.Set([]string{"hello", "world", "last"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world", "last"}, "h_hello_world_sopas", "DELETE")
+	trie.Set([]string{"hello", "world", "last"}, "h_hello_world_sopas_default", "OPTIONS")
+	trie.Set([]string{"hola", "world", "last", "cuatro"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hola", ":uuid", "last"}, "h_uuid", "ALL")
 
-	trie.Set([]string{""}, map[string]string{"ALL": "root"})
-	trie.Set([]string{"hello"}, map[string]string{"POST": "h_hello"})
-	trie.Set([]string{"hello", "world"}, map[string]string{"GET": "h_hello_world"})
-	trie.Set([]string{"hello", "world", "last"}, m)
-	trie.Set([]string{"hello", "world", "last"}, m)
+	//	l, r := trie.Get([]string{"hola", ":uuid", "last"})
+	//l, r := trie.Get([]string{"xhello"})
+	r := trie.Get([]string{"hola", "sopas"})
+	//r := trie.Get([]string{"hola", "world", "last", "cuatro"})
 
-	r, e := trie.Get([]string{"hello", "world", "last"})
+	//	l, r := trie.Get([]string{"hello", "world", "last"})
 
-	fmt.Println(r, e)
+	if len(r.Handler) > 0 {
+		fmt.Println(r.Level, r.Handler)
+	} else {
 
-	//	log.Fatal(http.ListenAndServe(":8080", router))
+		//	trie.GetLevel(3)
+
+		for k, _ := range r.Node {
+			if strings.HasPrefix(k, ":") {
+				fmt.Println(k)
+			}
+		}
+
+	}
+
 }
