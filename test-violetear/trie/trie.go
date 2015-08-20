@@ -10,27 +10,30 @@ func main() {
 	trie := violetear.NewTrie()
 
 	trie.Set([]string{""}, "root", "GET")
-	trie.Set([]string{"hello"}, "h_hello", "GET")
-	trie.Set([]string{"hello", "world"}, "h_hello_world", "GET")
-	trie.Set([]string{"hello", "world", "last"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{":uuid"}, "h_uuid", "ALL")
+	trie.Set([]string{"hello", "world", ":uuid", "cuatro"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world", ":uuidXY"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world", "last", ":uuid"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world", "last", "cuad"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world", "last", "cuatro"}, "h_hello_world", "GET, POST,     PUT")
 	trie.Set([]string{"hello", "world", "last"}, "h_hello_world_sopas", "DELETE")
 	trie.Set([]string{"hello", "world", "last"}, "h_hello_world_sopas_default", "OPTIONS")
-	trie.Set([]string{"hola", "world", "last", "cuatro"}, "h_hello_world", "GET, POST,     PUT")
+	trie.Set([]string{"hello", "world"}, "h_hello_world", "GET")
+	trie.Set([]string{"hello"}, "h_hello", "GET")
+	trie.Set([]string{"hola", ":ip", ":uuid"}, "h_uuid", "ALL")
+	trie.Set([]string{"hola", ":ip", "last"}, "h_uuid", "ALL")
 	trie.Set([]string{"hola", ":uuid", "last"}, "h_uuid", "ALL")
+	trie.Set([]string{"hola", ":uuid", ":last"}, "h_uuid", "ALL")
 
-	//	l, r := trie.Get([]string{"hola", ":uuid", "last"})
-	//l, r := trie.Get([]string{"xhello"})
-	r := trie.Get([]string{"hola", "sopas"})
-	//r := trie.Get([]string{"hola", "world", "last", "cuatro"})
+	r, l := trie.Get([]string{"hello", "worldX"})
 
-	//	l, r := trie.Get([]string{"hello", "world", "last"})
-
-	if len(r.Handler) > 0 {
-		fmt.Println(r.Level, r.Handler)
-	} else {
+	if len(r.Handler) > 0 && l {
+		fmt.Println(r.Handler, l)
+	} else if r.HasRegex {
 
 		//	trie.GetLevel(3)
 
+		fmt.Println("----> ", r, r.HasRegex, l)
 		for k, _ := range r.Node {
 			if strings.HasPrefix(k, ":") {
 				fmt.Println(k)
