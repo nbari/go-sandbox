@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	d := violetear.NewDynamic()
+	d := violetear.NewDynamicSet()
 	d.Set(":ip", `^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$`)
 	d.Set(":uuid", "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
