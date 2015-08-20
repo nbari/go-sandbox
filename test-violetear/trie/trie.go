@@ -10,6 +10,7 @@ func main() {
 	trie := violetear.NewTrie()
 
 	trie.Set([]string{""}, "root", "GET")
+	trie.Set([]string{":uuid", ":uuid2"}, "h_uuid", "ALL")
 	trie.Set([]string{":uuid"}, "h_uuid", "ALL")
 	trie.Set([]string{"hello", "world", ":uuid", "cuatro"}, "h_hello_world", "GET, POST,     PUT")
 	trie.Set([]string{"hello", "world", ":uuidXY"}, "h_hello_world", "GET, POST,     PUT")
@@ -22,17 +23,15 @@ func main() {
 	trie.Set([]string{"hello"}, "h_hello", "GET")
 	trie.Set([]string{"hola", ":ip", ":uuid"}, "h_uuid", "ALL")
 	trie.Set([]string{"hola", ":ip", "last"}, "h_uuid", "ALL")
-	trie.Set([]string{"hola", ":uuid", "last"}, "h_uuid", "ALL")
 	trie.Set([]string{"hola", ":uuid", ":last"}, "h_uuid", "ALL")
+	trie.Set([]string{"hola", ":uuid", "last"}, "h_uuid", "ALL")
 
-	r, l := trie.Get([]string{"hello", "worldX"})
+	r, l := trie.Get([]string{"hell3o"})
 
 	if len(r.Handler) > 0 && l {
 		fmt.Println(r.Handler, l)
 	} else if r.HasRegex {
-
-		//	trie.GetLevel(3)
-
+		// search for regex
 		fmt.Println("----> ", r, r.HasRegex, l)
 		for k, _ := range r.Node {
 			if strings.HasPrefix(k, ":") {
@@ -40,6 +39,8 @@ func main() {
 			}
 		}
 
+	} else {
+		fmt.Println("no path", r)
 	}
 
 }
