@@ -3,29 +3,19 @@ package main
 import (
 	"fmt"
 	"github.com/nbari/violetear"
+	"net/http"
 	"strings"
 )
+
+func test(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "aa")
+}
 
 func main() {
 	trie := violetear.NewTrie()
 
-	trie.Set([]string{"hello", ":uuid", "last"}, "h_uuid", "ALL")
+	trie.Set([]string{"hello", ":uuid", "last"}, test, "ALL")
 
-	r, l := trie.Get([]string{"hello"})
-
-	if len(r.Handler) > 0 && l {
-		fmt.Println(r.Handler, l)
-	} else if r.HasRegex {
-		// search for regex
-		fmt.Println("----> ", r, r.HasRegex, l)
-		for k, _ := range r.Node {
-			if strings.HasPrefix(k, ":") {
-				fmt.Println(k)
-			}
-		}
-
-	} else {
-		fmt.Println("no path", r)
-	}
+	t, p, l := trie.Get([]string{"hello"})
 
 }
