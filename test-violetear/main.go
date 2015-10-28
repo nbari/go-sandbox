@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/nbari/violetear"
-	//	"log"
+	"github.com/nbari/violetear/middleware"
+	"log"
 	"net/http"
 )
 
@@ -24,23 +25,63 @@ func commonHeaders(fn http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func wrapper(router *violetear.Router) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		router.LogRequests = true
-		fmt.Fprintf(w, "not found %s!", r.URL.Path)
-	}
+func exampleMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Our middleware logic goes here...
+		w.Header().Set("X-app-Version", "1.0")
+		next.ServeHTTP(w, r)
+	})
+}
+
+func logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lw := violetear.NewResponseWriter(w)
+		w.Header().Set("request-id", "naranjas")
+		next.ServeHTTP(lw, r)
+		log.Printf("%s [%s] %d %d",
+			r.RemoteAddr,
+			r.URL,
+			lw.Status(),
+			lw.Size())
+	})
+}
+
+func middlewareOne(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Executing middlewareOne")
+		next.ServeHTTP(w, r)
+		log.Println("Executing middlewareOne again")
+	})
+}
+
+func middlewareTwo(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Executing middlewareTwo")
+		if r.URL.Path != "/" {
+			return
+		}
+		next.ServeHTTP(w, r)
+		log.Println("Executing middlewareTwo again")
+	})
+}
+
+func final(w http.ResponseWriter, r *http.Request) {
+	log.Println("Executing finalHandler")
+	w.Write([]byte("OK"))
 }
 
 func main() {
 	router := violetear.New()
 	router.LogRequests = true
-	router.Request_ID = "rid"
+	router.RequestID = "request-id"
 
 	router.AddRegex(":uuid", `[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
 	router.AddRegex(":sopas", `sopas`)
 
-	router.HandleFunc("/hello", wrapper(router), "GET")
-	router.HandleFunc("/hello/world", commonHeaders(hello_world), "GET,POST")
+	stdChain := middleware.New(logger, middlewareOne, middlewareTwo)
+
+	router.Handle("/", stdChain.ThenFunc(final), "GET")
+	router.Handle("/foo", stdChain.ThenFunc(final), "GET")
 	router.HandleFunc("/hello/world/:sopas", hello_world_all, "GET")
 	router.HandleFunc(":uuid", hello_world)
 	router.HandleFunc("*", hello_world)
@@ -50,9 +91,5 @@ func main() {
 	router.HandleFunc("/hola/epazote/*", hello_world)
 	router.HandleFunc("/hola/epazote/a/papas", hello_world)
 
-	//	router.NotAllowedHandler = http.HandlerFunc(not_found)
-	//	router.NotFoundHandler = http.HandlerFunc(not_found)
-	router.SetHeader("X-app-epazote", "1.1")
-
-	router.Run(":8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
