@@ -7,36 +7,70 @@ import (
 	"time"
 )
 
-var timer *time.Ticker
-
-func scheduler(seconds time.Duration) *time.Ticker {
-	ticker := time.NewTicker(seconds * time.Second)
-	go func() {
-		for t := range ticker.C {
-			// do stuff
-			fmt.Println(t)
-		}
-	}()
-	return ticker
+type scheduler struct {
+	t    <-chan time.Time
+	quit chan struct{}
+	f    func()
 }
 
-func Start(timer *time.Ticker) http.Handler {
+type schedulerPool struct {
+	schedulers map[string]scheduler
+}
+
+func NewScheduler() *schedulerPool {
+	return &schedulerPool{
+		schedulers: make(map[string]scheduler),
+	}
+}
+
+func (s *schedulerPool) Add(name string, duration time.Duration) {
+
+	scheduler := scheduler{
+		t:    time.NewTicker(duration).C,
+		quit: make(chan struct{}),
+		f:    func() { fmt.Println(name) },
+	}
+
+	s.schedulers[name] = scheduler
+	go func() {
+		for {
+			select {
+			case <-scheduler.t:
+				scheduler.f()
+			case <-scheduler.quit:
+				return
+			}
+		}
+	}()
+}
+
+func (s *schedulerPool) Stop(name string) error {
+	scheduler := s.schedulers[name]
+	close(scheduler.quit)
+	return nil
+}
+
+func New(s *schedulerPool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		timer = scheduler(1)
+		d := r.URL.Query().Get("duration")
+		n := r.URL.Query().Get("name")
+		seconds, _ := time.ParseDuration(d)
+		s.Add(n, seconds)
 		w.Write([]byte("Starting scheduler"))
 	})
 }
 
-func Stop(timer *time.Ticker) http.Handler {
+func Stop(s *schedulerPool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		timer.Stop()
+		n := r.URL.Query().Get("name")
+		s.Stop(n)
 		w.Write([]byte("Stoping scheduler"))
 	})
 }
 
 func main() {
-	timer = scheduler(1)
-	http.Handle("/start", Start(timer))
-	http.Handle("/stop", Stop(timer))
+	s := NewScheduler()
+	http.Handle("/new", New(s))
+	http.Handle("/stop", Stop(s))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
