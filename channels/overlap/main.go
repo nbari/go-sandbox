@@ -21,9 +21,9 @@ func main() {
 		quit: make(chan struct{}),
 		f: func() {
 			start := time.Now()
-			fmt.Printf("Start: %q ", start)
+			fmt.Printf("Start: %q ", start.Format(time.RFC3339))
 			time.Sleep(time.Second * 4)
-			fmt.Printf("End: %q\n", time.Since(start))
+			fmt.Printf("Elapsed: %q\n", time.Since(start))
 		},
 	}
 
