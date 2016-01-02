@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 )
@@ -19,7 +20,7 @@ func myFunc() func() {
 		start := time.Now()
 		fmt.Printf("Start: %q ", start.Format(time.RFC3339))
 		time.Sleep(time.Second * 4)
-		fmt.Printf("Elapsed: %q\n", time.Since(start))
+		fmt.Printf("Elapsed: %q - Gorutines: %d\n", time.Since(start), runtime.NumGoroutine())
 	}
 }
 
@@ -31,11 +32,14 @@ func main() {
 		f:    myFunc(),
 	}
 
+	_ = "breakpoint"
+
 	go func() {
 		for {
 			select {
 			case <-scheduler.t:
 				scheduler.f()
+				fmt.Printf("Gorutines: %d\n", runtime.NumGoroutine())
 			case <-scheduler.quit:
 				return
 			}
