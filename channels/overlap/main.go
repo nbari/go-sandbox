@@ -14,17 +14,21 @@ type scheduler struct {
 	f    func()
 }
 
+func myFunc() func() {
+	return func() {
+		start := time.Now()
+		fmt.Printf("Start: %q ", start.Format(time.RFC3339))
+		time.Sleep(time.Second * 4)
+		fmt.Printf("Elapsed: %q\n", time.Since(start))
+	}
+}
+
 func main() {
 
 	scheduler := scheduler{
 		t:    time.NewTicker(time.Second * 1).C,
 		quit: make(chan struct{}),
-		f: func() {
-			start := time.Now()
-			fmt.Printf("Start: %q ", start.Format(time.RFC3339))
-			time.Sleep(time.Second * 4)
-			fmt.Printf("Elapsed: %q\n", time.Since(start))
-		},
+		f:    myFunc(),
 	}
 
 	go func() {
