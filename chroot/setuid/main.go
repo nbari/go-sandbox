@@ -1,3 +1,6 @@
+// sudo go run main.go -gid 20 -uid 501
+// http://stackoverflow.com/questions/35962179/is-there-a-way-to-chroot-sandbox-a-go-os-exec-call-prevent-rm-rf
+//
 package main
 
 import (
