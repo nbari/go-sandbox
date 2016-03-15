@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"io/ioutil"
 	"log"
 )
 
@@ -42,4 +43,7 @@ func main() {
 	})
 
 	log.Printf("\n%s\n%s", private_key_pem, public_key_pem)
+
+	ioutil.WriteFile("public_key.pem", public_key_pem, 0644)
+	ioutil.WriteFile("private_key.pem", private_key_pem, 0644)
 }
