@@ -20,7 +20,7 @@ func main() {
 	var plain_text, encrypted, decrypted, label []byte
 	var err error
 
-	plain_text = []byte("Plain text message to be encrypted")
+	plain_text = []byte("Plain text message to be encrypted: 244bf447430e88cad08fb9fcb77ca77c671675a6606f7b15580d7d0266859117b9de8f348a564571c6ca0ef21c82e6c6bf0925e8c1 0cc175b9c0f1b6a831c399e269772661 0cc175b9c0fxxy")
 
 	//Generate Private Key
 	if private_key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil {
