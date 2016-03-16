@@ -1,20 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"io/ioutil"
-	"log"
 )
 
 func main() {
-	// 4096
-
 	private_key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	// Precompute some calculations -- Calculations that speed up private key operations in the future
@@ -22,7 +21,7 @@ func main() {
 
 	//Validate Private Key -- Sanity checks on the key
 	if err = private_key.Validate(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	private_key_pem := pem.EncodeToMemory(
@@ -34,7 +33,7 @@ func main() {
 
 	public_key, err := x509.MarshalPKIXPublicKey(&private_key.PublicKey)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	public_key_pem := pem.EncodeToMemory(&pem.Block{
@@ -42,8 +41,8 @@ func main() {
 		Bytes: public_key,
 	})
 
-	log.Printf("\n%s\n%s", private_key_pem, public_key_pem)
+	fmt.Printf("%s%s", private_key_pem, public_key_pem)
 
-	ioutil.WriteFile("public_key.pem", public_key_pem, 0644)
-	ioutil.WriteFile("private_key.pem", private_key_pem, 0644)
+	key := [][]byte{private_key_pem, public_key_pem}
+	ioutil.WriteFile("key.pem", bytes.Join(key, []byte("")), 0644)
 }

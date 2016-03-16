@@ -14,56 +14,6 @@ import (
 )
 
 func main() {
-
-	var private_key *rsa.PrivateKey
-	var public_key *rsa.PublicKey
-	var plain_text, encrypted, decrypted, label []byte
-	var err error
-
-	plain_text = []byte("Plain text message to be encrypted: 244bf447430e88cad08fb9fcb77ca77c671675a6606f7b15580d7d0266859117b9de8f348a564571c6ca0ef21c82e6c6bf0925e8c1 0cc175b9c0f1b6a831c399e269772661 0cc175b9c0fxxy")
-
-	//Generate Private Key
-	if private_key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil {
-		log.Fatal(err)
-	}
-
-	// Precompute some calculations -- Calculations that speed up private key operations in the future
-	private_key.Precompute()
-
-	//Validate Private Key -- Sanity checks on the key
-	if err = private_key.Validate(); err != nil {
-		log.Fatal(err)
-	}
-
-	//Public key address (of an RSA key)
-	public_key = &private_key.PublicKey
-
-	encrypted = encrypt_oaep(public_key, plain_text, label)
-	decrypted = decrypt_oaep(private_key, encrypted, label)
-
-	fmt.Printf("PLAIN TEXT: %s\n", string(plain_text))
-	fmt.Printf("OAEP Encrypted HEX len: %d\n%x\n", len(fmt.Sprintf("%x", encrypted)), encrypted)
-	base64_out_URL := base64.URLEncoding.EncodeToString(encrypted)
-	base64_out_STD := base64.StdEncoding.EncodeToString(encrypted)
-	fmt.Printf("OAEP Encrypted Base64 Std len: %d\n%s\n", len(base64_out_URL), base64_out_URL)
-	fmt.Printf("OAEP Encrypted Base64 URL len: %d\n%s\n", len(base64_out_STD), base64_out_STD)
-	base85_buffer := make([]byte, ascii85.MaxEncodedLen(len(encrypted)))
-	encodedbytes := ascii85.Encode(base85_buffer, encrypted)
-	fmt.Printf("OAEP Encrypted Base85 len: %d\n%s\n", encodedbytes, base85_buffer)
-
-	fmt.Println()
-	fmt.Println()
-	fmt.Println()
-	fmt.Printf("OAEP Decrypted [%x] to \n[%s]\n", encrypted, decrypted)
-
-	// To use existing private key (Skipping the GenerateKey, Precompute, Validation steps shown above)
-	// This reads pem file and retrieves the public, private key needed to encrypt data
-	// use_existing_keys()
-
-}
-
-func use_existing_keys() {
-
 	var pem_file_path string
 	var err error
 	var block *pem.Block
@@ -74,7 +24,7 @@ func use_existing_keys() {
 	plain_text = []byte("Plain text message to be encrypted")
 
 	// A PEM file can contain a Private key among others (Public certificate, Intermidiate Certificate, Root certificate, ...)
-	pem_file_path = "/path/to/pem/file"
+	pem_file_path = "../key.pem"
 	if pem_data, err = ioutil.ReadFile(pem_file_path); err != nil {
 		log.Fatalf("Error reading pem file: %s", err)
 	}
@@ -95,10 +45,27 @@ func use_existing_keys() {
 
 	public_key = &private_key.PublicKey
 
+	private_key.Precompute()
+
 	encrypted = encrypt_oaep(public_key, plain_text, label)
 	decrypted = decrypt_oaep(private_key, encrypted, label)
 
 	fmt.Printf("OAEP Encrypted [%s] to \n[%x]\n", string(plain_text), encrypted)
+	fmt.Printf("OAEP Decrypted [%x] to \n[%s]\n", encrypted, decrypted)
+
+	fmt.Printf("PLAIN TEXT: %s\n", string(plain_text))
+	fmt.Printf("OAEP Encrypted HEX len: %d\n%x\n", len(fmt.Sprintf("%x", encrypted)), encrypted)
+	base64_out_URL := base64.URLEncoding.EncodeToString(encrypted)
+	base64_out_STD := base64.StdEncoding.EncodeToString(encrypted)
+	fmt.Printf("OAEP Encrypted Base64 Std len: %d\n%s\n", len(base64_out_URL), base64_out_URL)
+	fmt.Printf("OAEP Encrypted Base64 URL len: %d\n%s\n", len(base64_out_STD), base64_out_STD)
+	base85_buffer := make([]byte, ascii85.MaxEncodedLen(len(encrypted)))
+	encodedbytes := ascii85.Encode(base85_buffer, encrypted)
+	fmt.Printf("OAEP Encrypted Base85 len: %d\n%s\n", encodedbytes, base85_buffer)
+
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
 	fmt.Printf("OAEP Decrypted [%x] to \n[%s]\n", encrypted, decrypted)
 
 	return
