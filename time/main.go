@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	t := time.Now()
-	fmt.Println("Location:", t.Location(), ":Time:", t)
+	t := time.Now().UTC()
+	fmt.Println("Location:", t.Location(), ":Time:", t.Format(time.RFC3339Nano))
 }
