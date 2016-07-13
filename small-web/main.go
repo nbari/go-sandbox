@@ -35,5 +35,5 @@ func main() {
 	router.HandleFunc("*", index)
 
 	http.Handle("/", router)
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":80", router))
 }
