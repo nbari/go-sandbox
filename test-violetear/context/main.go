@@ -11,15 +11,19 @@ import (
 
 func catchAll(w http.ResponseWriter, r *http.Request) {
 	// Get & print the content of named-param *
-	fmt.Fprintf(w, "CatchAll value:, %q", r.Context().Value("*"))
+	params := r.Context().Value(violetear.ParamsKey).(violetear.Params)
+
+	fmt.Fprintf(w, "CatchAll value:, %q", params["*"])
 }
 
 func handleUUID(w http.ResponseWriter, r *http.Request) {
+	// get router params
+	params := r.Context().Value(violetear.ParamsKey).(violetear.Params)
 	// add a key-value pair to the context
 	ctx := context.WithValue(r.Context(), "key", "my-value")
 	// print current value for :uuid
 	fmt.Fprintf(w, "Named parameter: %q, key: %s",
-		ctx.Value(":uuid"),
+		params[":uuid"],
 		ctx.Value("key"),
 	)
 }
