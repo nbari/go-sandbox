@@ -17,7 +17,6 @@ func sleep() {
 func index(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 	go sleep()
-	return
 }
 
 func main() {
