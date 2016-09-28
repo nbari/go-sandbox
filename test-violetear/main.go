@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/nbari/violetear"
-	"github.com/nbari/violetear/middleware"
 	"log"
 	"net/http"
+
+	"github.com/nbari/violetear"
+	"github.com/nbari/violetear/middleware"
 )
 
 func hello_world(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +75,7 @@ func main() {
 	router := violetear.New()
 	router.LogRequests = true
 	router.RequestID = "request-id"
+	//	router.Verbose = false
 
 	router.AddRegex(":uuid", `[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
 	router.AddRegex(":sopas", `sopas`)
