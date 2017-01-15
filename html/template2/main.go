@@ -31,6 +31,7 @@ type Page struct {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p interface{}) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err := templates.ExecuteTemplate(w, tmpl, p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
