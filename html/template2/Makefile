@@ -4,11 +4,8 @@ GO ?= go
 
 all: clean build
 
-generate:
-	${GO} generate
-
-build: generate
+build:
 	${GO} build
 
 clean:
-	@rm -rf template
+	@rm -rf template2

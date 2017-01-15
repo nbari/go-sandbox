@@ -1,5 +1,5 @@
-<html>
+{{- define "header" }}
 <head>
     <title>{{ .Title }}</title>
 </head>
-<body>
+{{- end }}
