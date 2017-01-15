@@ -4,15 +4,28 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/nbari/violetear"
 )
 
 // compile all templates and cache them
-var templates = template.Must(template.ParseGlob("templates/*"))
+var (
+	templates = template.Must(template.New("").Funcs(funcMap).ParseGlob(
+		filepath.Join("templates", "*.tpl")),
+	)
+	funcMap = template.FuncMap{
+		"Upper": toUpper,
+		"title": strings.Title,
+	}
+)
 
-// Model of stuff to render a page
-type Model struct {
+func toUpper(s string) string {
+	return strings.ToUpper(s)
+}
+
+type Page struct {
 	Title string
 	Name  string
 }
@@ -26,11 +39,11 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p interface{}) {
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	params := r.Context().Value(violetear.ParamsKey).(violetear.Params)
-	model := Model{
-		Title: "xxx",
+	page := Page{
+		Title: "test title",
 		Name:  params["*"].(string),
 	}
-	renderTemplate(w, "indexPage", &model)
+	renderTemplate(w, "index", &page)
 }
 
 // The server itself

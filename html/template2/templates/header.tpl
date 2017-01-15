@@ -1,5 +1,9 @@
-{{- define "header" }}
+{{- define "header" -}}
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>{{ .Title }}</title>
+    <meta charset="UTF-8">
+    <title>{{ .Title | title }}</title>
 </head>
-{{- end }}
+    <body>
+{{ end }}

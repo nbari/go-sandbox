@@ -1,9 +1,7 @@
-{{ define "indexPage" }}
-<!DOCTYPE html>
-<html>
-{{- template "header" }}
-<body>
-Hello world! My name is {{ .Name }}
-</body>
-{{- template "footer" }}
+{{ define "index" }}
+{{- template "header" . -}}
+
+Hello world! My name is {{ .Name | Upper }}
+
+{{- template "footer" -}}
 {{ end }}
