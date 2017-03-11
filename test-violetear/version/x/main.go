@@ -19,7 +19,7 @@ func main() {
 	router := violetear.New()
 
 	router.HandleFunc("/hello", handleHello, "GET, HEAD")
-	router.HandleFunc("/hello#violetear.v3", handleHelloV2, "GET, HEAD, POST")
+	router.HandleFunc("/hello#violetear.v2", handleHelloV2, "GET, HEAD, POST")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
