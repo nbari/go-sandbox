@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
-	"github.com/streadway/amqp"
 	"log"
 	"os"
 	"time"
+
+	"github.com/codegangsta/cli"
+	"github.com/streadway/amqp"
 )
 
 var totalTime int64 = 0
@@ -39,7 +40,7 @@ func main() {
 
 func runApp(c *cli.Context) {
 	println("Running!")
-	uri := "amqp://bunny:change_me@" + c.String("server") + ":5672"
+	uri := "amqp://bunny:test@" + c.String("server") + ":5672"
 
 	if c.Int("consumer") > -1 {
 		makeConsumers(uri, c.Int("concurrency"), c.Int("consumer"))
