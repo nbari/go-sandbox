@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"io/ioutil"
 	"time"
 )
 
@@ -9,7 +9,7 @@ func main() {
 	forever := make(chan struct{})
 	go func() {
 		for {
-			os.Stderr.WriteString("message: foo bar")
+			ioutil.WriteFile("/dev/null", []byte("message: foo bar"), 644)
 			time.Sleep(3 * time.Second)
 		}
 	}()
