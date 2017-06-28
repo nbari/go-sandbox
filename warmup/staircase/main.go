@@ -13,11 +13,11 @@ func main() {
 	for i := 1; i <= n; i++ {
 		for j := 1; j <= n; j++ {
 			if j <= n-i {
-				print(" ")
+				fmt.Print(" ")
 			} else {
-				print("#")
+				fmt.Print("#")
 			}
 		}
-		println()
+		fmt.Printf("\n")
 	}
 }
