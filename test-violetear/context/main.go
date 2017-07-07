@@ -14,9 +14,16 @@ func catchAll(w http.ResponseWriter, r *http.Request) {
 	log.Println("handler started")
 	defer log.Println("hander ended")
 
-	select {
-	case <-time.After(5 * time.Second):
+	ch := make(chan struct{})
+
+	go func(ch chan struct{}) {
+		time.Sleep(5 * time.Second)
 		fmt.Fprintln(w, "CatchAll")
+		ch <- struct{}{}
+	}(ch)
+
+	select {
+	case <-ch:
 	case <-ctx.Done():
 		err := ctx.Err()
 		log.Println(err)
