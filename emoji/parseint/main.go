@@ -18,5 +18,6 @@ func main() {
 	fmt.Printf("2b55: %c\n", '\u2b55')
 	fmt.Println("\u2b55")
 	fmt.Printf("%c\n", 0x2b55)
-	fmt.Printf("%c \n", rune(11093))
+	fmt.Printf("%c\n", 0x1F33F)
+	fmt.Printf("%c\n", rune(11093))
 }
