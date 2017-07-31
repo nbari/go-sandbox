@@ -23,5 +23,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("dk = %s\n", dk)
+	fmt.Printf("dk = %x\n", dk)
 }
