@@ -18,10 +18,12 @@ func GenerateSalt(size int) ([]byte, error) {
 
 func main() {
 	p := "secret"
-	salt, _ := GenerateSalt(32)
+	//salt, _ := GenerateSalt(32)
+	salt := []byte("salt")
 	dk, err := scrypt.Key([]byte(p), salt, 16384, 8, 1, 32)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("len(dk) = %+v\n", len(dk))
 	fmt.Printf("dk = %x\n", dk)
 }
