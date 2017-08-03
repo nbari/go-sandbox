@@ -19,7 +19,7 @@ func DerivePassphrase(passphrase string, keylen_bytes int) (key []byte, err erro
 	// Generate salt
 	salt := generateSalt()
 	// Set params
-	var N int32 = 16384
+	var N int32 = 1 << 14
 	var r int32 = 8
 	var p int32 = 1
 
@@ -39,7 +39,7 @@ func DerivePassphrase(passphrase string, keylen_bytes int) (key []byte, err erro
 	key = append(key, salt...)
 
 	// Encoding the params to be stored
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 	for _, elem := range [3]int32{N, r, p} {
 		err = binary.Write(buf, binary.LittleEndian, elem)
 		if err != nil {
