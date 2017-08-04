@@ -35,8 +35,12 @@ func DerivePassphrase(passphrase string, keylen_bytes int) (key []byte, err erro
 		return
 	}
 
+	fmt.Printf("len(key) = %+v\n", len(key))
+
 	// Appending the salt
 	key = append(key, salt...)
+
+	fmt.Printf("len(key) = %+v\n", len(key))
 
 	// Encoding the params to be stored
 	buf := &bytes.Buffer{}
@@ -49,6 +53,9 @@ func DerivePassphrase(passphrase string, keylen_bytes int) (key []byte, err erro
 		key = append(key, buf.Bytes()...)
 		buf.Reset()
 	}
+
+	fmt.Printf("len(key) = %+v\n", len(key))
+	fmt.Printf("key = %x\n", key)
 
 	// appending the sha-256 of the entire header at the end
 	hash_digest := sha256.New()
