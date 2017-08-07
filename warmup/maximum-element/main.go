@@ -16,6 +16,16 @@ func (s stack) Pop() stack {
 	return s[:len(s)-1]
 }
 
+func (s stack) Max() int {
+	max := 0
+	for _, v := range s {
+		if v > max {
+			max = v
+		}
+	}
+	return max
+}
+
 func main() {
 	var n, q int
 	io := bufio.NewReader(os.Stdin)
@@ -30,7 +40,7 @@ func main() {
 		case 2:
 			s = s.Pop()
 		case 3:
-			fmt.Println(s[len(s)-1])
+			fmt.Println(s.Max())
 		}
 	}
 }
