@@ -27,7 +27,7 @@ func main() {
 	sum := 0
 	ch := make(chan int) // Create a new channel.
 	go Generate(ch)      // Launch Generate goroutine.
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 20000000; i++ {
 		prime := <-ch
 		sum += prime
 		ch1 := make(chan int)
