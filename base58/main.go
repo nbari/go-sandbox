@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"sync"
+	"time"
 
 	"github.com/nbari/base58"
 )
@@ -10,16 +10,11 @@ import (
 func encode(i uint64) {
 	x := base58.Encode(i)
 	fmt.Printf("%d = %s\n", i, x)
+	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	var wg sync.WaitGroup
-	for i, val := uint64(0), uint64(1<<24); i <= val; i++ {
-		wg.Add(1)
-		go func(j uint64, wg *sync.WaitGroup) {
-			encode(j)
-			wg.Done()
-		}(i, &wg)
+	for i, val := uint64(0), uint64(100); i < val; i++ {
+		encode(i)
 	}
-	wg.Wait()
 }
