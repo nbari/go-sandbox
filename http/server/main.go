@@ -35,14 +35,14 @@ func (w *ResponseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-func myHandler() http.Handler {
+func www() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		lw := &ResponseWriter{w, 0, 0}
 		http.StripPrefix("/",
 			http.FileServer(http.Dir("/tmp/x")),
 		).ServeHTTP(lw, r)
-		log.Printf("%s [%s] %d %d %v",
+		log.Printf("%s [%s] %d %d %s",
 			r.RemoteAddr,
 			r.URL,
 			lw.Status,
@@ -67,22 +67,20 @@ func main() {
 
 	srv := &http.Server{
 		Addr:      ":8080",
-		Handler:   myHandler(),
+		Handler:   www(),
 		TLSConfig: tlsConfig,
 	}
 	log.Fatal(srv.ListenAndServeTLS("", ""))
 }
 
-// CreateSSL creates certificate and public key
+// CreateSSL creates self signed certificate
 func CreateSSL() ([]byte, []byte, error) {
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
-
 	host, err := os.Hostname()
 	if err != nil {
 		return nil, nil, err
 	}
-
 	template := x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
@@ -94,17 +92,14 @@ func CreateSSL() ([]byte, []byte, error) {
 		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		DNSNames:    []string{"localhost", host},
 	}
-
 	privatekey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, err
 	}
-
 	crt, err := x509.CreateCertificate(rand.Reader, &template, &template, &privatekey.PublicKey, privatekey)
 	if err != nil {
 		return nil, nil, err
 	}
-
 	var certOut, keyOut bytes.Buffer
 	pem.Encode(&certOut, &pem.Block{
 		Type:  "CERTIFICATE",
@@ -114,6 +109,5 @@ func CreateSSL() ([]byte, []byte, error) {
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(privatekey)},
 	)
-
 	return certOut.Bytes(), keyOut.Bytes(), nil
 }
