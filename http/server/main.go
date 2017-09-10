@@ -14,20 +14,44 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/nbari/violetear"
 )
 
-func main() {
-	router := violetear.New()
-	router.Verbose = true
-	router.LogRequests = true
-	router.Handle("*",
-		http.StripPrefix("/",
-			http.FileServer(http.Dir("/tmp")),
-		),
-	)
+type ResponseWriter struct {
+	http.ResponseWriter
+	Status, Size int
+}
 
+func (w *ResponseWriter) Write(data []byte) (int, error) {
+	if w.Status == 0 {
+		w.WriteHeader(http.StatusOK)
+	}
+	Size, err := w.ResponseWriter.Write(data)
+	w.Size += Size
+	return Size, err
+}
+
+func (w *ResponseWriter) WriteHeader(statusCode int) {
+	w.Status = statusCode
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+func myHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		lw := &ResponseWriter{w, 0, 0}
+		http.StripPrefix("/",
+			http.FileServer(http.Dir("/tmp/x")),
+		).ServeHTTP(lw, r)
+		log.Printf("%s [%s] %d %d %v",
+			r.RemoteAddr,
+			r.URL,
+			lw.Status,
+			lw.Size,
+			time.Since(start))
+	})
+}
+
+func main() {
 	certPEMBlock, keyPEMBlock, err := CreateSSL()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -43,12 +67,10 @@ func main() {
 
 	srv := &http.Server{
 		Addr:      ":8080",
-		Handler:   router,
+		Handler:   myHandler(),
 		TLSConfig: tlsConfig,
 	}
-
 	log.Fatal(srv.ListenAndServeTLS("", ""))
-
 }
 
 // CreateSSL creates certificate and public key
@@ -73,16 +95,12 @@ func CreateSSL() ([]byte, []byte, error) {
 		DNSNames:    []string{"localhost", host},
 	}
 
-	// generate private key
 	privatekey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	publickey := &privatekey.PublicKey
-
-	// create a self-signed certificate.
-	crt, err := x509.CreateCertificate(rand.Reader, &template, &template, publickey, privatekey)
+	crt, err := x509.CreateCertificate(rand.Reader, &template, &template, &privatekey.PublicKey, privatekey)
 	if err != nil {
 		return nil, nil, err
 	}
