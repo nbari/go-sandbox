@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/nbari/violetear"
 )
@@ -38,7 +39,7 @@ func findRemotes(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			if len(out) > 0 {
-				repos.Remotes = append(repos.Remotes, fmt.Sprintf("%s", out))
+				repos.Remotes = append(repos.Remotes, strings.TrimSpace(fmt.Sprintf("%s", out)))
 			}
 		}
 	}
