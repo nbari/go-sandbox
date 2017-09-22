@@ -12,11 +12,10 @@ func splitPath(b *testing.B, p string) {
 	b.ResetTimer()
 	//	var pathParts []string
 
-	f := func(c rune) bool {
-		return c == '/'
-	}
 	for i := 0; i < b.N; i++ {
-		pathParts := strings.FieldsFunc(p, f)
+		pathParts := strings.FieldsFunc(p, func(c rune) bool {
+			return c == '/'
+		})
 		// root (empty slice)
 		if len(pathParts) == 0 {
 			pathParts = append(pathParts, "/")
