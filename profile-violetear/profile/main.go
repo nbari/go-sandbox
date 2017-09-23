@@ -1,28 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"math"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/pprof"
 
 	"github.com/nbari/violetear"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	for i := 0; i < 1000000; i++ {
-		math.Pow(36, 89)
-	}
-	fmt.Fprint(w, "Hello!")
+	w.Write([]byte("hello"))
 }
 
 func main() {
-	router := violetear.New()
-	router.HandleFunc("/", hello, "GET,HEAD")
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+	r := violetear.New()
+	r.HandleFunc("/", hello, "GET,HEAD")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	// Register pprof handlers
+	r.HandleFunc("/debug/pprof/*", pprof.Index)
+	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	r.HandleFunc("/debug/pprof/trace", pprof.Trace)
+
+	http.ListenAndServe(":8080", r)
 }
