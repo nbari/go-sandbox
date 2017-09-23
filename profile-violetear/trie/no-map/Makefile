@@ -6,4 +6,4 @@ test:
 	 go test -bench=.
 
 clean:
-	rm -rf profile *.pdf *.prof
+	rm -rf profile *.pdf *.prof *.test
