@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// MethodHandler keeps HTTP Method and http.handler
 type MethodHandler struct {
 	Method  string
 	Handler http.Handler
@@ -19,13 +20,6 @@ type Trie struct {
 	Node        []*Trie
 	path        string
 	version     string
-}
-
-// NewTrie returns a new Trie
-func NewTrie() *Trie {
-	return &Trie{
-		Node: make([]*Trie, 0),
-	}
 }
 
 // contains check if path exists on node
@@ -47,13 +41,14 @@ func (t *Trie) Set(path []string, handler http.Handler, method, version string) 
 	key := path[0]
 	newpath := path[1:]
 
-	val, ok := t.contains(key, version)
+	node, ok := t.contains(key, version)
 
 	if !ok {
-		val = NewTrie()
-		val.path = key
-		val.version = version
-		t.Node = append(t.Node, val)
+		node = &Trie{
+			path:    key,
+			version: version,
+		}
+		t.Node = append(t.Node, node)
 
 		// check for regex ":"
 		if strings.HasPrefix(key, ":") {
@@ -71,7 +66,7 @@ func (t *Trie) Set(path []string, handler http.Handler, method, version string) 
 			return c == ','
 		})
 		for _, v := range methods {
-			val.Handler = append(val.Handler, MethodHandler{strings.ToUpper(strings.TrimSpace(v)), handler})
+			node.Handler = append(node.Handler, MethodHandler{strings.ToUpper(strings.TrimSpace(v)), handler})
 		}
 		return nil
 	}
@@ -80,7 +75,7 @@ func (t *Trie) Set(path []string, handler http.Handler, method, version string) 
 		return errors.New("Catch-all \"*\" must always be the final path element.")
 	}
 
-	return val.Set(newpath, handler, method, version)
+	return node.Set(newpath, handler, method, version)
 }
 
 // Get returns a node

@@ -1,6 +1,6 @@
 goos: darwin
 goarch: amd64
 pkg: github.com/nbari/go-sandbox/profile-violetear/trie/map
-BenchmarkTrie-4   	 3000000	       540 ns/op	     488 B/op	       6 allocs/op
+BenchmarkTrie-4   	   10000	    410387 ns/op	     979 B/op	      12 allocs/op
 PASS
-ok  	github.com/nbari/go-sandbox/profile-violetear/trie/map	2.178s
+ok  	github.com/nbari/go-sandbox/profile-violetear/trie/map	4.117s

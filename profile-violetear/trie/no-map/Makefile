@@ -1,9 +1,9 @@
-.PHONY: all clean
+.PHONY: all clean  test
 
-all: clean build
+all: clean test
 
-build:
-	go build
+test:
+	 go test -bench=.
 
 clean:
 	rm -rf profile *.pdf *.prof
