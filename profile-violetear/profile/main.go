@@ -19,7 +19,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := violetear.New()
-	router.HandleFunc("/", hello)
+	router.HandleFunc("/", hello, "GET,HEAD")
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
