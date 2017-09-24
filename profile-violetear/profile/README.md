@@ -1,1 +1,1 @@
-go tool pprof http://0:6060/debug/pprof/heap
+go tool pprof --alloc_space  http://0:8080/debug/pprof/heap
