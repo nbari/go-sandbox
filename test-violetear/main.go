@@ -36,10 +36,10 @@ func exampleMiddleware(next http.Handler) http.Handler {
 
 func logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		lw := violetear.NewResponseWriter(w)
+		lw := violetear.NewResponseWriter(w, "")
 		w.Header().Set("request-id", "naranjas")
 		next.ServeHTTP(lw, r)
-		log.Printf("%s [%s] %d %d",
+		log.Printf("---- %s [%s] %d %d",
 			r.RemoteAddr,
 			r.URL,
 			lw.Status(),
