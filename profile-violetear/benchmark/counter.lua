@@ -11,35 +11,26 @@ end
 
 
 done = function(summary, latency, requests)
-  -- open output file
-  f = io.open("results/wrk.csv", "a+")
-  f:write("time_started,min_requests,max_requests,mean_requests,count_requests,min_latency,max_latency,mean_latency,stdev,50th,90th,99th,99.999th,duration,requests,bytes,connect_errors,read_errors,write_errors,status_errors,timeouts\n")
-  f:write(string.format("%s,%f,%f,%f,%s,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%d\n",
+    -- open output file
+    errors = summary.errors
+    failed = errors.connect + errors.read + errors.write + errors.timeout
+    -- latency and duration are measured in microseconds
+    --for _, p in pairs({50, 66, 75, 80, 90, 95, 98, 99}) do
+    --n = latency:percentile(p)
+    --f:write(string.format("\"p%dLatencyMs\": %g,", p, n / 1000.0))
+    --end
+
+    f = io.open("results/wrk.csv", "a+")
+    f:write("date,failedRequests,timeoutRequests,non2xxResponses,maxLatencyMs,avgLatencyMs,completedRequests,requestsPerSecond,kBytesPerSec\n")
+    f:write(string.format("%s,%d,%d,%d,%g,%g,%g,%07.2f,%07.2f\n",
     os.date("!%Y-%m-%dT%TZ"),
-    requests.min,   -- minimum latency
-    requests.max,   -- max latency
-    requests.mean,  -- mean of latency
-    requests, -- raw value and count
-    latency.min,    -- minimum latency
-    latency.max,    -- max latency
-    latency.mean,   -- mean of latency
-    latency.stdev,  -- standard deviation of latency
-
-    latency:percentile(50),     -- 50percentile latency
-    latency:percentile(90),     -- 90percentile latency
-    latency:percentile(99),     -- 99percentile latency
-    latency:percentile(99.999), -- 99.999percentile latency
-
-    summary["duration"],          -- duration of the benchmark
-    summary["requests"],          -- total requests during the benchmark
-    summary["bytes"],             -- total received bytes during the benchmark
-
-    summary["errors"]["connect"], -- total socket connection errors
-    summary["errors"]["read"],    -- total socket read errors
-    summary["errors"]["write"],   -- total socket write errors
-    summary["errors"]["status"],  -- total socket write errors
-    summary["errors"]["timeout"]  -- total request timeouts
-    ))
-
-  f:close()
+    failed,
+    errors.timeout,
+    errors.status,
+    latency.max / 1000.0,
+    latency.mean / 1000.0,
+    summary.requests,
+    summary.requests / summary.duration * 1000000,
+    summary.bytes / 1024 / summary.duration * 1000000))
+    f:close()
 end

@@ -43,5 +43,5 @@ DIFF=$(echo "$END - $START" | bc)
 write "Done! build in $DIFF seconds."
 
 # clean
-awk 'NR <= 1 || !/^time_/' results/wrk.csv > result.csv.tmp && mv result.csv.tmp results/wrk.csv
+awk 'NR <= 1 || !/^date/' results/wrk.csv > result.csv.tmp && mv result.csv.tmp results/wrk.csv
 awk 'NR <= 1 || !/^T/' results/go-stats.csv > go-stats.csv.tmp && mv go-stats.csv.tmp results/go-stats.csv

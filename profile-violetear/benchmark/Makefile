@@ -6,6 +6,7 @@ all: clean build
 
 view:
 	jq -R -s -f csv2json.jq results/wrk.csv
+	#  jq ".[].requestsPerSecond"
 
 build:
 	go build
