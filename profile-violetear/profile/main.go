@@ -3,18 +3,13 @@ package main
 import (
 	"net/http"
 	"net/http/pprof"
-	"strconv"
 	"time"
 
 	"github.com/nbari/violetear"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	sleep, _ := strconv.Atoi(r.FormValue("sleep"))
-	if sleep > 0 {
-		time.Sleep(time.Duration(sleep) * time.Millisecond)
-	} else {
-	}
+	time.Sleep(10 * time.Millisecond)
 	w.Write([]byte("hello"))
 }
 
