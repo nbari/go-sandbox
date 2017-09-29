@@ -13,28 +13,28 @@ write() {
 write "sleeping 0ms"
 ./benchmark &
 sleep 1
-wrk -c2 -d15s -t2 -s counter.lua http://0:8080
+wrk -c100 -d15s -t2 -s counter.lua http://0:8080
 pkill -9 benchmark
 sleep 2
 
 write "sleeping 10ms"
 ./benchmark -s 10 &
 sleep 1
-wrk -c2 -d15s -t2 -s counter.lua http://0:8080
+wrk -c100 -d15s -t2 -s counter.lua http://0:8080
 pkill -9 benchmark
 sleep 2
 
 write "sleeping 100ms"
 ./benchmark -s 100 &
 sleep 1
-wrk -c2 -d15s -t2 -s counter.lua http://0:8080
+wrk -c100 -d15s -t2 -s counter.lua http://0:8080
 pkill -9 benchmark
 sleep 2
 
 write "sleeping 500ms"
 ./benchmark -s 500 &
 sleep 1
-wrk -c2 -d15s -t2 -s counter.lua http://0:8080
+wrk -c100 -d15s -t2 -s counter.lua http://0:8080
 pkill -9 benchmark
 sleep 2
 
