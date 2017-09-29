@@ -1,6 +1,7 @@
 .PHONY: all view
 
 all: clean build
+	@mkdir results
 #	wrk -c2 -d10s -t2 -s counter.lua http://0:8080
 #	@awk 'NR <= 1 || !/^time_/' result.csv > result.csv.tmp && mv result.csv.tmp result.csv
 
@@ -12,4 +13,4 @@ build:
 	go build
 
 clean:
-	@rm -rf benchmark *.tmp *.txt *.csv results/*
+	@rm -rf benchmark *.tmp *.txt *.csv results

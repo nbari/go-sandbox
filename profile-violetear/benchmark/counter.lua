@@ -3,7 +3,11 @@
 counter = 0
 
 request = function()
-    path = "/" .. counter
+    if counter % 100 == 0 then 
+	    path = "/" 
+    else
+	    path = path .. counter .. "/"
+    end
     wrk.headers["X-Counter"] = counter
     counter = counter + 1
     return wrk.format(nil, path)

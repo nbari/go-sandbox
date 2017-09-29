@@ -62,24 +62,34 @@ func oneWord(w http.ResponseWriter, r *http.Request) {
 	} else {
 		runtime.Gosched()
 	}
-	w.Write([]byte("1: word"))
+	w.Write([]byte("1 word"))
 }
 
-func twoWord(w http.ResponseWriter, r *http.Request) {
+func twoWords(w http.ResponseWriter, r *http.Request) {
 	if sleepTime > 0 {
 		time.Sleep(sleepTime)
 	} else {
 		runtime.Gosched()
 	}
-	w.Write([]byte("2: word"))
+	w.Write([]byte("2 words"))
+}
+
+func manyWords(w http.ResponseWriter, r *http.Request) {
+	if sleepTime > 0 {
+		time.Sleep(sleepTime)
+	} else {
+		runtime.Gosched()
+	}
+	w.Write([]byte("many words"))
 }
 
 func startVioletear() {
 	r := violetear.New()
-	//	r.LogRequests = true
+	//r.LogRequests = true
 	r.AddRegex(":word", `^\w+$`)
 	r.HandleFunc("/", hello)
 	r.HandleFunc("/:word", oneWord)
-	r.HandleFunc("/:word/:word", twoWord)
+	r.HandleFunc("/:word/:word", twoWords)
+	r.HandleFunc("/:word/:word/*", manyWords)
 	http.ListenAndServe(port, r)
 }
