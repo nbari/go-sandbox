@@ -12,4 +12,4 @@ build:
 	go build
 
 clean:
-	@rm -rf benchmark *.tmp *.csv results/*
+	@rm -rf benchmark *.tmp *.txt *.csv results/*
