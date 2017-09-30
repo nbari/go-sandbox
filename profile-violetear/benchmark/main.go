@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"runtime"
 	"time"
 
@@ -32,16 +30,11 @@ func main() {
 		runtime.ReadMemStats(&mem)
 		runtime.ReadMemStats(&mem)
 		var u uint64 = 1024 * 1024
-		f, err := os.OpenFile("results/go-stats.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		f.WriteString(fmt.Sprintf("TotalAlloc,Alloc,HeapAlloc,HeapSys\n%d,%d,%d,%d\n",
+		fmt.Printf("TotalAlloc,Alloc,HeapAlloc,HeapSys\n%d,%d,%d,%d\n",
 			mem.TotalAlloc/u,
 			mem.Alloc/u,
 			mem.HeapAlloc/u,
-			mem.HeapSys/u))
+			mem.HeapSys/u)
 	}()
 
 	startVioletear()
