@@ -27,7 +27,7 @@ func benchRequest(b *testing.B, router http.Handler, r *http.Request) {
 
 func BenchmarkRouter(b *testing.B) {
 	router := violetear.New()
-	router.LogRequests = false
+	router.LogRequests = true
 	router.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {}, "GET,HEAD")
 	r, _ := http.NewRequest("GET", "/hello", nil)
 	benchRequest(b, router, r)
