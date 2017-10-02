@@ -3,30 +3,29 @@ package main
 import (
 	"net/http"
 	"net/http/pprof"
-	"time"
 
 	"github.com/nbari/violetear"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(10 * time.Millisecond)
 	w.Write([]byte("hello"))
 }
 
-func oneWord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("1: word"))
+func helloWord(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hello world"))
 }
-func twoWord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("2: word"))
+
+func catchAll(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("*"))
 }
 
 func main() {
 	r := violetear.New()
-	r.LogRequests = true
+	//	r.LogRequests = true
 	r.AddRegex(":word", `^\w+$`)
-	r.HandleFunc("/", hello, "GET,HEAD")
-	r.HandleFunc("/:word", oneWord)
-	r.HandleFunc("/:word/:word", twoWord)
+	r.HandleFunc("/hello", hello, "GET,HEAD")
+	r.HandleFunc("/hello/:word/", helloWord, "GET,HEAD")
+	r.HandleFunc("/*", catchAll, "GET,HEAD")
 
 	// Register pprof handlers
 	r.HandleFunc("/debug/pprof/*", pprof.Index)
