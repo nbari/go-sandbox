@@ -40,8 +40,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p interface{}) {
 
 // Well hello there
 func hello(w http.ResponseWriter, r *http.Request) {
-	params := r.Context().Value(violetear.ParamsKey).(violetear.Params)
-	model := Model{Name: params["*"].(string)}
+	model := Model{Name: violetear.GetParam("*", r)}
+	//	model := violetear.GetParam("*", r)
 	renderTemplate(w, "templates/hello.html", &model)
 }
 
@@ -53,7 +53,7 @@ func main() {
 	// Example route that takes one rest style option
 	router.HandleFunc("/hello/*", hello)
 	router.Handle("/static/*",
-		//	http.StripPrefix("/static", http.FileServer(http.Dir("./static"))),
+		//		http.StripPrefix("/static", http.FileServer(http.Dir("./static"))),
 		http.StripPrefix("/static", http.FileServer(assetFS())),
 	)
 
