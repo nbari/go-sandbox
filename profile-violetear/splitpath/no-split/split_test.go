@@ -1,4 +1,4 @@
-package test_splitpath
+package test_split
 
 import (
 	"fmt"
