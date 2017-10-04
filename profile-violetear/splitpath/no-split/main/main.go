@@ -14,6 +14,10 @@ func noSplit(path string) {
 				field.Reset()
 			}
 			continue
+		} else if rune == '*' {
+			fmt.Printf("field = %c\n", rune)
+			field.Reset()
+			return
 		}
 		field.WriteRune(rune)
 	}
@@ -30,6 +34,7 @@ func main() {
 		"/hello/:uuid/:uuid",
 		"/hello/:uuid/:uuid/*",
 		"/hello/:uuid/:uuid/*/",
+		"/hello/*/:uuid/:uuid/*/",
 	}
 	for _, p := range paths {
 		fmt.Printf("p = %+v\n", p)
