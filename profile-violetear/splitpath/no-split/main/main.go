@@ -10,19 +10,24 @@ func noSplit(path string) (string, string) {
 		return key, ""
 	}
 	for i := 0; i < len(path); i++ {
-		if path[i] == '/' && i > 0 {
-			key = path[1:i]
-			path = path[i:]
-			if key == "" && path != "" {
-				return noSplit(path)
+		if path[i] == '/' {
+			if i == 0 {
+				return noSplit(path[1:])
 			}
-			if path == "/" {
-				return key, ""
+			if i > 0 {
+				key = path[:i]
+				path = path[i:]
+				if key == "" && path != "" {
+					return noSplit(path)
+				}
+				if path == "/" {
+					return key, ""
+				}
+				return key, path
 			}
-			return key, path
 		}
 	}
-	return path[1:], ""
+	return path, ""
 }
 
 func main() {
