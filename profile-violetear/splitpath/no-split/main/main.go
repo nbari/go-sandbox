@@ -4,38 +4,17 @@ import (
 	"fmt"
 )
 
-func noSplit(path string) {
+func noSplit(path string) (string, string) {
 	var key string
-	if path != "" {
-		fieldStart := -1
-		for i := 0; i < len(path); i++ {
-			if path[i] == '/' {
-				if i >= 0 {
-					if fieldStart >= 0 {
-						key = path[1:i]
-						path = path[i:]
-						break
-					}
-				}
-			} else if path[i] == '*' {
-				key = "*"
-				path = ""
-				break
-			} else if fieldStart == -1 {
-				fieldStart = i
-			}
+	if path == "" {
+		return key, ""
+	}
+	for i := 0; i < len(path); i++ {
+		if path[i] == '/' && i > 0 {
+			return path[1:i], path[i:]
 		}
-	} else {
-		key = "/"
 	}
-	if key == "" && path != "" {
-		key = path[1:]
-		path = ""
-	}
-	if path == "/" {
-		path = ""
-	}
-	fmt.Printf("key= %s path= %s\n", key, path)
+	return path[1:], ""
 }
 
 func main() {
@@ -52,7 +31,8 @@ func main() {
 	}
 	for _, p := range paths {
 		fmt.Printf("p = %+v\n", p)
-		noSplit(p)
+		key, path := noSplit(p)
+		fmt.Printf("key: %s path: %s\n", key, path)
 		println()
 	}
 }
