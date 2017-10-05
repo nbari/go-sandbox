@@ -7,19 +7,22 @@ import (
 func noSplit(path string) {
 	var key string
 	if path != "" {
+		fieldStart := -1
 		for i := 0; i < len(path); i++ {
-			if path[i] == '/' && i > 0 {
-				if path[1:i] == "/" {
-					continue
-				} else {
-					key = path[1:i]
-					path = path[i:]
-					break
+			if path[i] == '/' {
+				if i >= 0 {
+					if fieldStart >= 0 {
+						key = path[1:i]
+						path = path[i:]
+						break
+					}
 				}
 			} else if path[i] == '*' {
 				key = "*"
 				path = ""
 				break
+			} else if fieldStart == -1 {
+				fieldStart = i
 			}
 		}
 	} else {
