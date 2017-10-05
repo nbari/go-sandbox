@@ -1,33 +1,49 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 )
 
 func noSplit(path string) {
-	var field bytes.Buffer
-	for i, rune := range path {
-		if rune == '/' && i > 0 {
-			fmt.Printf("field = %+v\n", field.String())
-			fmt.Printf("path = %+v\n", path[i:])
-			return
-		} else if rune == '*' {
-			fmt.Printf("field = %c\n", rune)
-			return
-		} else if rune != '/' {
-			field.WriteRune(rune)
+	var key string
+	if path != "" {
+		for i := 0; i < len(path); i++ {
+			if path[i] == '/' && i > 0 {
+				if path[1:i] == "/" {
+					continue
+				} else {
+					key = path[1:i]
+					path = path[i:]
+					break
+				}
+			} else if path[i] == '*' {
+				key = "*"
+				path = ""
+				break
+			}
 		}
+	} else {
+		key = "/"
 	}
-	if field.Len() > 0 {
-		fmt.Printf("field = %+v\n", field.String())
-		fmt.Printf("path = %+v\n", "")
+	if key == "" && path != "" {
+		key = path[1:]
+		path = ""
 	}
+	if path == "/" {
+		path = ""
+	}
+	fmt.Printf("key= %s path= %s\n", key, path)
 }
 
 func main() {
 	paths := []string{
+		"/",
+		"//",
+		"//////////",
 		"/hello/:uuid/:uuid",
+		"/hello/:uuid/:uuid/",
+		"/:uuid/:uuid/",
+		"/:uuid/",
 		"/:uuid/:uuid",
 		"/:uuid",
 	}
