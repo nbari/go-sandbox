@@ -15,9 +15,11 @@ func noSplit(path string) (string, string) {
 			path = path[i:]
 			if key == "" && path != "" {
 				return noSplit(path)
-			} else {
-				return key, path
 			}
+			if path == "/" {
+				return key, ""
+			}
+			return key, path
 		}
 	}
 	return path[1:], ""
@@ -34,7 +36,7 @@ func main() {
 		"/:uuid/",
 		"/:uuid/:uuid",
 		"/:uuid",
-		"/hello",
+		"/hello/",
 	}
 	for _, p := range paths {
 		fmt.Printf("p = %+v\n", p)
