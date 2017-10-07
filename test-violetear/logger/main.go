@@ -11,6 +11,8 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
+	// to test 499 when closing connection
+	time.Sleep(time.Second)
 	w.Write([]byte("hello world!"))
 }
 
