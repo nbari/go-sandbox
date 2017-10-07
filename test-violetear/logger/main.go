@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,9 +12,24 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	// to test 499 when closing connection
-	time.Sleep(time.Second)
-	w.Write([]byte("hello world!"))
+	ctx := r.Context()
+	log.Println("handler started")
+	defer log.Println("hander ended")
+
+	ch := make(chan struct{})
+	go func(ch chan struct{}) {
+		time.Sleep(3 * time.Second)
+		fmt.Fprintln(w, "Hello world!")
+		ch <- struct{}{}
+	}(ch)
+
+	select {
+	case <-ch:
+	case <-ctx.Done():
+		err := ctx.Err()
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusPartialContent)
+	}
 }
 
 func myLogger(w *violetear.ResponseWriter, r *http.Request) {
