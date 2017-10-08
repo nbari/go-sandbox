@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"runtime"
 	"time"
@@ -23,6 +24,8 @@ func main() {
 	port = fmt.Sprintf(":%d", *p)
 	sleepTime = time.Duration(*s) * time.Millisecond
 	samplingPointDuration := time.Duration(*t) * time.Second
+
+	log.Printf("Port %v Sleep: %s Sampling: %s\n", port, sleepTime, samplingPointDuration)
 
 	go func() {
 		time.Sleep(samplingPointDuration)
