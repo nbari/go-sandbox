@@ -22,10 +22,8 @@ func pong(ch chan string) {
 
 func main() {
 	ch := make(chan string)
-	go func() {
-		ch <- "toss"
-	}()
 	go ping(ch)
+	ch <- "toss"
 	pong(ch)
-	time.Sleep(3 * time.Second)
+	//time.Sleep(3 * time.Second)
 }
