@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 	"net/http/pprof"
+	"time"
 
 	"github.com/nbari/violetear"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(time.Millisecond)
 	w.Write([]byte("hello"))
 }
 
@@ -21,7 +23,7 @@ func catchAll(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := violetear.New()
-	//	r.LogRequests = true
+	r.LogRequests = true
 	r.AddRegex(":word", `^\w+$`)
 	r.HandleFunc("/hello", hello, "GET,HEAD")
 	r.HandleFunc("/hello/:word/", helloWord, "GET,HEAD")
