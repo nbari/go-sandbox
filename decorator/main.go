@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	// c := client.Decorate(&http.Client{},
 	c := client.Decorate(client.MockClient{},
 		client.Last(log.New(os.Stdout, "[last decorator] ", 0)),
 		client.Logging(log.New(os.Stdout, "[logging decorator] ", 0)),
