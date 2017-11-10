@@ -1,6 +1,8 @@
 package client
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // Our client is defined as something that does a http request and gets a response and error
 type Client interface {
