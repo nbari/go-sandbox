@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/nbari/go-sandbox/decorator/client"
+	"github.com/nbari/go-sandbox/decorator/http-client/client"
 )
 
 func main() {
