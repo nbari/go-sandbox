@@ -22,6 +22,7 @@ func bar(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "bar %s!", r.URL.Path)
 }
 
+// BasicAuth secure /metrics endpoint by using the defined username and password
 func BasicAuth(next http.Handler, username, password, realm string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, pass, ok := r.BasicAuth()
@@ -34,14 +35,22 @@ func BasicAuth(next http.Handler, username, password, realm string) http.Handler
 	})
 }
 
+func secondMW(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Second middleware")
+		// do something here
+		next.ServeHTTP(w, r)
+	})
+}
+
 func counterMW(c *prometheus.HistogramVec) middleware.Constructor {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 			log.Println("Executing counter middleware")
+			// do something here
 			next.ServeHTTP(w, r)
-			log.Println("End of request")
-			// call prometheus
+			log.Println("updating prometheus counters")
 			c.WithLabelValues(r.URL.Path).Observe(time.Since(start).Seconds())
 		})
 	}
@@ -52,15 +61,14 @@ func main() {
 		prometheus.HistogramOpts{
 			Namespace: "myAPI",
 			Name:      "requests_total",
-			Help:      "Total number of /hello requests.",
+			Help:      "Total number of requests.",
 		}, []string{"endpoint"})
 	prometheus.MustRegister(counter)
 
-	router := violetear.New()
-
 	// midleware
-	stdChain := middleware.New(counterMW(counter))
+	stdChain := middleware.New(counterMW(counter), secondMW)
 
+	router := violetear.New()
 	router.Handle("/", stdChain.ThenFunc(index))
 	router.Handle("/foo", stdChain.ThenFunc(foo), "GET")
 	router.Handle("/bar", stdChain.ThenFunc(bar), "POST")
