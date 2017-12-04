@@ -4,7 +4,6 @@ import (
 	"crypto/subtle"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 
@@ -14,9 +13,7 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	delay := rand.Intn(100)
-	time.Sleep(time.Millisecond * time.Duration(delay))
-	fmt.Fprintf(w, "delayed: %d", delay)
+	fmt.Fprintf(w, "index %s!", r.URL.Path)
 }
 func foo(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "foo %s!", r.URL.Path)
@@ -37,7 +34,7 @@ func BasicAuth(next http.Handler, username, password, realm string) http.Handler
 	})
 }
 
-func counterMW(c prometheus.Summary) middleware.Constructor {
+func counterMW(c *prometheus.HistogramVec) middleware.Constructor {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
@@ -45,17 +42,18 @@ func counterMW(c prometheus.Summary) middleware.Constructor {
 			next.ServeHTTP(w, r)
 			log.Println("End of request")
 			// call prometheus
-			c.Observe(float64(time.Since(start).Seconds()))
+			c.WithLabelValues(r.URL.Path).Observe(time.Since(start).Seconds())
 		})
 	}
 }
 
 func main() {
-	counter := prometheus.NewSummary(prometheus.SummaryOpts{
-		Namespace: "myAPI",
-		Name:      "response_duration_seconds",
-		Help:      "Time taken to response",
-	})
+	counter := prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Namespace: "myAPI",
+			Name:      "requests_total",
+			Help:      "Total number of /hello requests.",
+		}, []string{"endpoint"})
 	prometheus.MustRegister(counter)
 
 	router := violetear.New()
