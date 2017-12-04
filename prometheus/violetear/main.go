@@ -4,6 +4,7 @@ import (
 	"crypto/subtle"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -13,7 +14,9 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, %s!", r.URL.Path[1:])
+	delay := rand.Intn(100)
+	time.Sleep(time.Millisecond * time.Duration(delay))
+	fmt.Fprintf(w, "delayed: %d", delay)
 }
 func foo(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "foo %s!", r.URL.Path)
@@ -49,9 +52,9 @@ func counterMW(c prometheus.Summary) middleware.Constructor {
 
 func main() {
 	counter := prometheus.NewSummary(prometheus.SummaryOpts{
-		Namespace: "api",
-		Name:      "requests_per_second",
-		Help:      "API Requests count",
+		Namespace: "myAPI",
+		Name:      "response_duration_seconds",
+		Help:      "Time taken to response",
 	})
 	prometheus.MustRegister(counter)
 
