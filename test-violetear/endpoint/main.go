@@ -9,13 +9,11 @@ import (
 )
 
 func hello_world(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	fmt.Fprintf(w, "path: %s", r.URL.Path)
 }
+
 func hello_world_all(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "catch %s!", r.URL.Path)
-}
-func not_found(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "not found %s!", r.URL.Path)
+	fmt.Fprintf(w, "path: %s", r.URL.Path)
 }
 
 func main() {
