@@ -51,7 +51,8 @@ func counterMW(c *prometheus.HistogramVec) middleware.Constructor {
 			// do something here
 			next.ServeHTTP(w, r)
 			log.Println("updating prometheus counters")
-			c.WithLabelValues(r.URL.Path).Observe(time.Since(start).Seconds())
+			endpoint := violetear.GetRouteName(r)
+			c.WithLabelValues(endpoint).Observe(time.Since(start).Seconds())
 		})
 	}
 }
