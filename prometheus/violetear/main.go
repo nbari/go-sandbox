@@ -70,9 +70,9 @@ func main() {
 	stdChain := middleware.New(counterMW(counter), secondMW)
 
 	router := violetear.New()
-	router.Handle("/", stdChain.ThenFunc(index))
-	router.Handle("/foo", stdChain.ThenFunc(foo), "GET")
-	router.Handle("/bar", stdChain.ThenFunc(bar), "POST")
+	router.Handle("/", stdChain.ThenFunc(index)).Name("root")
+	router.Handle("/foo", stdChain.ThenFunc(foo), "GET").Name("foo")
+	router.Handle("/bar", stdChain.ThenFunc(bar), "POST").Name("bar")
 	router.Handle("/metrics", BasicAuth(prometheus.Handler(),
 		"user",
 		"password",
