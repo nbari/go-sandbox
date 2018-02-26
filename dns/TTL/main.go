@@ -20,11 +20,11 @@ func main() {
 	m.SetQuestion(*domain+".", dns.TypeA)
 	r, _, err := c.Exchange(&m, server+":53")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 	if len(r.Answer) == 0 {
-		fmt.Println("Could not found NS records")
+		fmt.Fprintln(os.Stderr, "Could not found NS records")
 		os.Exit(1)
 	}
 
