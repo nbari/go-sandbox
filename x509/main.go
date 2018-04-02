@@ -26,7 +26,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	crt, err := x509.CreateCertificate(rand.Reader, &template, &template, &privatekey.PublicKey, privatekey)
+	crt, err := x509.CreateCertificate(rand.Reader,
+		&template,
+		&template,
+		&privatekey.PublicKey,
+		privatekey)
 	if err != nil {
 		panic(err)
 	}
