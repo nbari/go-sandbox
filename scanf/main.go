@@ -1,9 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
-	var i int
-	fmt.Scanf("%d", &i)
-	fmt.Printf("i = %+v\n", i)
+	fmt.Println("Enter your name")
+
+	var name string
+	fmt.Scanf("%s", &name)
+	fmt.Printf("name = %s\n", name)
 }
