@@ -25,6 +25,7 @@ func stream(w http.ResponseWriter, r *http.Request) {
 	}
 	go writeOutput(w, rPipe)
 	cmd.Wait()
+	wPipe.Close()
 }
 
 func writeOutput(w http.ResponseWriter, input io.ReadCloser) {
