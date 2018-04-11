@@ -13,7 +13,10 @@ import (
 )
 
 func stream(w http.ResponseWriter, r *http.Request) {
-	cmd := exec.Command("python", "game.py")
+	ctx := r.Context()
+	ch := make(chan struct{})
+
+	cmd := exec.CommandContext(ctx, "python", "game.py")
 	rPipe, wPipe, err := os.Pipe()
 	if err != nil {
 		log.Fatal(err)
@@ -23,9 +26,21 @@ func stream(w http.ResponseWriter, r *http.Request) {
 	if err := cmd.Start(); err != nil {
 		log.Fatal(err)
 	}
+
 	go writeOutput(w, rPipe)
-	cmd.Wait()
-	wPipe.Close()
+
+	go func(ch chan struct{}) {
+		cmd.Wait()
+		wPipe.Close()
+		ch <- struct{}{}
+	}(ch)
+
+	select {
+	case <-ch:
+	case <-ctx.Done():
+		err := ctx.Err()
+		log.Printf("Client disconnected: %s\n", err)
+	}
 }
 
 func writeOutput(w http.ResponseWriter, input io.ReadCloser) {
@@ -35,14 +50,16 @@ func writeOutput(w http.ResponseWriter, input io.ReadCloser) {
 		return
 	}
 
-	// Immportant to make it work in browsers
+	// Important to make it work in browsers
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
 	in := bufio.NewScanner(input)
 	for in.Scan() {
-		fmt.Fprintf(w, "data: %s\n", in.Text())
+		data := in.Text()
+		log.Printf("data: %s\n", data)
+		fmt.Fprintf(w, "data: %s\n", data)
 		flusher.Flush()
 	}
 	input.Close()
