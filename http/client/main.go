@@ -14,8 +14,8 @@ func main() {
 		retries  int = 3
 	)
 	for retries > 0 {
-		// response, err = http.Get("https://non-existen")
-		response, err = http.Get("https://google.com/robots.txt")
+		response, err = http.Get("https://non-existent")
+		//response, err = http.Get("https://google.com/robots.txt")
 		if err != nil {
 			log.Println(err)
 			retries -= 1
