@@ -8,5 +8,6 @@ import (
 func main() {
 	t := time.Now().UTC()
 	fmt.Println("Location:", t.Location(), ":Time:", t.Format(time.RFC3339Nano))
+	fmt.Println("Unix:", t.Unix())
 	fmt.Println("UnixNano:", t.UnixNano())
 }
