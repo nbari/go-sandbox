@@ -17,4 +17,5 @@ func main() {
 	fmt.Println("Unix:  ", time.Now().Unix())
 	t := time.Now().Add(d)
 	fmt.Println("Unix:+ ", t.Unix())
+	fmt.Println("Unix:+ ", time.Now().Add(d).Unix())
 }
