@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Flag flag
 func Flag(x string) (string, error) {
 	x = strings.ToUpper(x)
 	if len(x) != 2 {
