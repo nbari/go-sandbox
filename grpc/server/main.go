@@ -4,8 +4,9 @@ import (
 	"log"
 	"net"
 
+	"context"
+
 	pb "github.com/nbari/go-sandbox/grpc/helloworld"
-	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
