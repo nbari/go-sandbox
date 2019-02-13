@@ -16,7 +16,8 @@ func encode(i uint64) {
 func main() {
 	concurrency := 4
 	sem := make(chan struct{}, concurrency)
-	for i, val := uint64(0), uint64(1<<16); i <= val; i++ {
+	//for i, val := uint64(0), uint64(1<<16); i <= val; i++ {
+	for i, val := uint64(0), uint64(1<<4); i <= val; i++ {
 		sem <- struct{}{}
 		go func(i uint64) {
 			defer func() { <-sem }()
