@@ -40,13 +40,13 @@ func main() {
 	}
 
 	for {
-		err = pool.QueryRow("SELECT current_timestamp(3)").Scan(&now)
+		err = pool.QueryRow("SELECT SLEEP(60)").Scan(&now)
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Printf("now = %+v\n", now)
-		time.Sleep(3 * time.Second)
+		time.Sleep(time.Second)
 		s := pool.Stats()
-		fmt.Printf("s = %+v\n", s)
+		fmt.Printf("OpenConnections: %+v\n", s.OpenConnections)
 	}
 }
