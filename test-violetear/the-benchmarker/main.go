@@ -10,7 +10,6 @@ import (
 )
 
 func showId(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("w = %+v\n", w)
 	fmt.Fprintf(w, violetear.GetParam("id", r))
 }
 
@@ -22,7 +21,7 @@ func main() {
 	router := violetear.New()
 	router.LogRequests = true
 
-	router.AddRegex(":id", `\d`)
+	router.AddRegex(":id", `\d+`)
 
 	router.HandleFunc("/", showEmpty, "GET")
 	router.HandleFunc("/user/:id", showId, "GET")
