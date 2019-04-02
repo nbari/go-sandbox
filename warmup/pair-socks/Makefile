@@ -1,2 +1,2 @@
 all:
-	go run main.go -- < input
+	go run main.go < input
