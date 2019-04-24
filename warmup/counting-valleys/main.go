@@ -13,20 +13,14 @@ func main() {
 	fmt.Fscan(io, &n)
 	fmt.Fscan(io, &s)
 	var sea, valleys int
-	var inValley bool
 	for i := 0; i < n; i++ {
 		if string(s[i]) == "U" {
 			sea++
 		} else if string(s[i]) == "D" {
 			sea--
 		}
-		if sea < 0 {
-			inValley = true
-		} else {
-			if inValley {
-				valleys++
-			}
-			inValley = false
+		if sea == 0 && string(s[i]) == "U" {
+			valleys++
 		}
 	}
 	fmt.Println(valleys)
