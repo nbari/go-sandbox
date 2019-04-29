@@ -18,10 +18,10 @@ func catch499(next http.Handler) http.Handler {
 
 		ch := make(chan struct{})
 
-		go func(ch chan struct{}) {
+		go func() {
 			time.Sleep(3 * time.Second)
 			ch <- struct{}{}
-		}(ch)
+		}()
 
 		select {
 		case <-ch:
@@ -38,11 +38,11 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 
 	ch := make(chan struct{})
 
-	go func(ch chan struct{}) {
+	go func() {
 		time.Sleep(5 * time.Second)
 		fmt.Fprintln(w, "Hello World!")
 		ch <- struct{}{}
-	}(ch)
+	}()
 
 	select {
 	case <-ch:
