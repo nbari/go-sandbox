@@ -4,27 +4,21 @@ import (
 	"time"
 )
 
-func ping(ch chan int) {
-	for {
-		ball := <-ch
-		ball++
-		print(ball)
-		ch <- ball
-	}
-}
-func pong(ch chan int) {
-	for {
-		ball := <-ch
-		ball--
-		print(ball)
-		ch <- ball
-	}
-}
-
 func main() {
 	ch := make(chan int)
-	go ping(ch)
-	go pong(ch)
+	go player(ch)
+	go player(ch)
+
 	ch <- 1
-	time.Sleep(time.Second)
+	time.Sleep(time.Minute)
+}
+
+func player(ch chan int) {
+	for {
+		<-ch
+		println("ping")
+		time.Sleep(time.Second)
+		ch <- 1
+		println("pong\n")
+	}
 }
