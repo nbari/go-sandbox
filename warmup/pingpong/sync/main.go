@@ -1,43 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
 
 func main() {
-	ch := make(chan string)
+	ch := make(chan struct{})
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 
 	timer := time.After(5 * time.Second)
 
-	// ping
-	go func() {
-		for {
-			ch <- "ping"
-		}
-	}()
-
-	// pong
-	go func() {
-		for {
-			ch <- "pong"
-		}
-	}()
-
-	go func() {
+	pipo := func() {
 		for {
 			select {
-			case s := <-ch:
-				println(s)
+			case <-ch:
+				fmt.Println("ping")
+				ch <- struct{}{}
 				time.Sleep(time.Second)
+				fmt.Println("pong\n")
 			case <-timer:
 				wg.Done()
 			}
 		}
-	}()
+	}
+
+	go pipo()
+	go pipo()
+
+	ch <- struct{}{}
 
 	wg.Wait()
 }
