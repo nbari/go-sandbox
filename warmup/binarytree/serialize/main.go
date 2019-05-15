@@ -68,7 +68,7 @@ func main() {
 		Insert(13)
 	printNode(t.node)
 
-	out := &[]int{}
-	serialize(t.node, out)
+	out := []int{}
+	serialize(t.node, &out)
 	fmt.Printf("out = %+v\n", out)
 }
