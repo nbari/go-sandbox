@@ -4,7 +4,20 @@ import (
 	"fmt"
 )
 
+var cache = make(map[int]int)
+
 func fib(n int) int {
+	if val, ok := cache[n]; ok {
+		println(val)
+		return val
+	} else {
+		nn := slowFib(n)
+		cache[n] = nn
+		return nn
+	}
+}
+
+func slowFib(n int) int {
 	if n < 2 {
 		return n
 	}
