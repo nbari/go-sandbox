@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"sort"
 )
 
 func main() {
 	str := "abcccccccd"
+	//str := "apple 1231111"
 	m := make(map[string]int)
 	for _, s := range str {
 		if val, ok := m[string(s)]; ok {
@@ -15,14 +15,14 @@ func main() {
 			m[string(s)] = 1
 		}
 	}
-	n := map[int]string{}
-	var a []int
+	var c string
+	var l int
 	for k, v := range m {
-		n[v] = k
-		a = append(a, v)
+		if v > l {
+			c = k
+			l = v
+		}
 	}
 
-	sort.Ints(a)
-
-	fmt.Printf("n[a[len(a)-1]] = %+v\n", n[a[len(a)-1]])
+	fmt.Println(c)
 }
