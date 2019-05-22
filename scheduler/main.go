@@ -2,11 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 	"time"
 )
 
@@ -30,17 +26,13 @@ func main() {
 					go myFunc(&wg)
 				}
 				wg.Wait()
-				fmt.Println("--- done ---\n\n")
+				fmt.Printf("--- done ---\n\n")
 			case <-quit:
 				return
 			}
 		}
 	}()
 
-	block := make(chan os.Signal)
-	signal.Notify(block, syscall.SIGUSR1, syscall.SIGUSR2)
-	<-block
-	signal.Stop(block)
-	log.Printf("%q signal received.", block)
-
+	<-time.After(time.Minute)
+	close(quit)
 }
