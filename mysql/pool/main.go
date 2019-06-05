@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -24,7 +25,7 @@ func main() {
 
 	// sql pool options
 	pool.SetConnMaxLifetime(time.Minute)
-	pool.SetMaxIdleConns(50)
+	pool.SetMaxIdleConns(30)
 	pool.SetMaxOpenConns(50)
 
 	err = pool.Ping()
@@ -32,21 +33,27 @@ func main() {
 		log.Fatalf("mysql: could not connect to the database: %s", err.Error())
 	}
 
-	var now string
-	for i := 0; i < 50; i++ {
-		go func() {
-			pool.QueryRow("SELECT NOW()").Scan(&now)
-		}()
+	var wg sync.WaitGroup
+	out := make(chan string)
+	for i := 0; i < 30; i++ {
+		wg.Add(1)
+		go func(w *sync.WaitGroup) {
+			var now string
+			pool.QueryRow("SELECT NOW() UNION SELECT SLEEP(1) LIMIT 1").Scan(&now)
+			out <- now
+			w.Done()
+		}(&wg)
 	}
 
-	for {
-		err = pool.QueryRow("SELECT SLEEP(60)").Scan(&now)
-		if err != nil {
-			log.Fatal(err)
+	go func() {
+		for o := range out {
+			fmt.Printf("out = %+v\n", o)
 		}
-		fmt.Printf("now = %+v\n", now)
-		time.Sleep(time.Second)
-		s := pool.Stats()
-		fmt.Printf("OpenConnections: %+v\n", s.OpenConnections)
-	}
+	}()
+
+	wg.Wait()
+	close(out)
+
+	s := pool.Stats()
+	fmt.Printf("OpenConnections: %+v\n", s.OpenConnections)
 }
