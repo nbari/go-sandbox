@@ -1,0 +1,13 @@
+---
+applications:
+- name: multiple-sql-queries
+  memory: 32M
+  env:
+    GOPACKAGENAME: github.com/nbari/go-sandbox/mysql/pool/http
+    MYSQL_USER: foo
+    MYSQL_PASS: foo
+    MYSQL_HOST: host
+    MYSQL_PORT: 3306
+    MYSQL_DATABASE: xxx
+  routes:
+    - route: multiple-sql-queries.tld
