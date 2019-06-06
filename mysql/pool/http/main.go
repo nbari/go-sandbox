@@ -46,7 +46,7 @@ func main() {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")
-		fmt.Fprintf(w, "Will run this query: SELECT NOW() UNION SELECT SLEEP(3) LIMIT 1\n\n")
+		fmt.Fprintf(w, "Will run this query (sleeping only for 10 queries out of 30): SELECT NOW() UNION SELECT SLEEP(3) LIMIT 1\n\n")
 		flusher.Flush()
 
 		var wg sync.WaitGroup
