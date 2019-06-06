@@ -53,12 +53,16 @@ func main() {
 		out := make(chan string)
 		for i := 0; i < 30; i++ {
 			wg.Add(1)
-			go func(w *sync.WaitGroup) {
+			go func(w *sync.WaitGroup, j int) {
 				var now string
-				pool.QueryRow("SELECT NOW() UNION SELECT SLEEP(3) LIMIT 1").Scan(&now)
+				if j%3 == 0 {
+					pool.QueryRow("SELECT \"after 3 seconds\" UNION SELECT SLEEP(3) LIMIT 1").Scan(&now)
+				} else {
+					pool.QueryRow("SELECT NOW()").Scan(&now)
+				}
 				out <- now
 				w.Done()
-			}(&wg)
+			}(&wg, i)
 		}
 
 		go func() {
@@ -69,6 +73,7 @@ func main() {
 		}()
 
 		wg.Wait()
+		time.Sleep(time.Second)
 		close(out)
 
 		s := pool.Stats()
