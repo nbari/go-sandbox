@@ -14,8 +14,8 @@ func hello_world(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := violetear.New()
-	router.LogRequests = false
+	//	router.LogRequests = false
 
-	router.HandleFunc("/hello/world", hello_world)
+	router.HandleFunc("/", hello_world)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
